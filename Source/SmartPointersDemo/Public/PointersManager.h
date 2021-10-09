@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "PointerReferencer.h"
 #include "PointersManager.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAction);
 
 UCLASS()
 class SMARTPOINTERSDEMO_API APointersManager : public AActor
@@ -34,17 +34,20 @@ private:
 	UPROPERTY(EditInstanceOnly, Category = "Shared Pointer")
 		TArray<class APointerReferencer*> SharedPointerReferencers;
 
-	UPROPERTY(BlueprintAssignable, Category = "Reference")
+	UPROPERTY(EditInstanceOnly, Category = "Shared Pointer")
+		AActor* SharedPointerObjectSpawnPos;
+
+	UPROPERTY(BlueprintAssignable, Category = "Shared Pointer")
 		FOnAction OnSharedPointerActivated;
 
-	UPROPERTY(BlueprintAssignable, Category = "Reference")
+	UPROPERTY(BlueprintAssignable, Category = "Shared Pointer")
 		FOnAction OnSharedPointerDeactivated;
 
 public:
 	TSharedPtr<class APointerReferencedActor> GetSharedPointerRef();
 
 	UFUNCTION(BlueprintCallable, Category = "Shared Pointer")
-		FORCEINLINE int GetSharedPointerRefsCount() { return SharedPointerObjectPtr.GetSharedReferenceCount(); };
+		FORCEINLINE int GetSharedPointerRefsCount();
 
 	void OnSharedPointerDereferenced();
 #pragma endregion Shared Pointer

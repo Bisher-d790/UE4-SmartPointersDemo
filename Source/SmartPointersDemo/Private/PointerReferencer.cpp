@@ -20,8 +20,9 @@ void APointerReferencer::SetReferenceActive(bool bActivate)
 	}
 	else if (!bActivate && IsReferenceValid())
 	{
-		PointerManagerRef->OnSharedPointerDereferenced();
 		ReferencePtr.Reset();
+
+		PointerManagerRef->OnSharedPointerDereferenced();
 
 		OnReferenceDeactivated.Broadcast();
 	}

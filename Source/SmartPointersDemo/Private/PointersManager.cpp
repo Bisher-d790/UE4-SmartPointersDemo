@@ -33,6 +33,11 @@ TSharedPtr<APointerReferencedActor> APointersManager::GetSharedPointerRef()
 	{
 		SharedPointerObjectPtr = TSharedPtr<APointerReferencedActor>(Cast<APointerReferencedActor>(GetWorld()->SpawnActor(SharedPointerClass)));
 
+		if (IsValid(SharedPointerObjectSpawnPos))
+			SharedPointerObjectPtr->SetActorLocation(SharedPointerObjectSpawnPos->GetActorLocation());
+
+		SharedPointerObjectPtr->Setup(this, EPointerTypes::VE_SharedPtr);
+
 		OnSharedPointerActivated.Broadcast();
 	}
 
@@ -47,7 +52,28 @@ void APointersManager::OnSharedPointerDereferenced()
 			return;
 	}
 
+	SharedPointerObjectPtr = nullptr;
 	SharedPointerObjectPtr.Reset();
 
 	OnSharedPointerDeactivated.Broadcast();
+}
+
+int APointersManager::GetSharedPointerRefsCount()
+{
+	int referenceNum = 0;
+
+	if (SharedPointerObjectPtr.IsValid())
+	{
+		referenceNum = SharedPointerObjectPtr.GetSharedReferenceCount();
+	}
+	else
+	{
+		for (auto& ReferencerIndex : SharedPointerReferencers)
+		{
+			if (ReferencerIndex->IsReferenceValid())
+				referenceNum++;
+		}
+	}
+
+	return referenceNum;
 }

@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "PointersManager.h"
+#include "Definitions.h"
 #include "PointerReferencer.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAction);
 
 UCLASS()
 class SMARTPOINTERSDEMO_API APointerReferencer : public AActor
@@ -22,6 +23,9 @@ private:
 
 	UPROPERTY(EditInstanceOnly, Category = "Reference")
 		class APointersManager* PointerManagerRef = nullptr;
+
+	UPROPERTY(EditInstanceOnly, Category = "Reference")
+		EPointerTypes PointerReferenceType;
 
 	UPROPERTY(BlueprintAssignable, Category = "Reference")
 		FOnAction OnReferenceActivated;
