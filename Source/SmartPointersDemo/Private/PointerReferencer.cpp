@@ -10,29 +10,24 @@ APointerReferencer::APointerReferencer()
 
 }
 
-// Called when the game starts or when spawned
-void APointerReferencer::BeginPlay()
-{
-	Super::BeginPlay();
-
-}
-
-// Called every frame
-void APointerReferencer::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 void APointerReferencer::SetReferenceActive(bool bActivate)
 {
 	if (bActivate && !IsReferenceValid())
 	{
 		ReferencePtr = PointerManagerRef->GetSharedPointerRef();
+
+		OnReferenceActivated.Broadcast();
 	}
 	else if (!bActivate && IsReferenceValid())
 	{
 		PointerManagerRef->OnSharedPointerDereferenced();
 		ReferencePtr.Reset();
+
+		OnReferenceDeactivated.Broadcast();
 	}
+}
+
+void APointerReferencer::ToggleReferenceActiveState()
+{
+	SetReferenceActive(!IsReferenceValid());
 }

@@ -32,6 +32,8 @@ TSharedPtr<APointerReferencedActor> APointersManager::GetSharedPointerRef()
 	if (!SharedPointerObjectPtr.IsValid())
 	{
 		SharedPointerObjectPtr = TSharedPtr<APointerReferencedActor>(Cast<APointerReferencedActor>(GetWorld()->SpawnActor(SharedPointerClass)));
+
+		OnSharedPointerActivated.Broadcast();
 	}
 
 	return SharedPointerObjectPtr;
@@ -46,4 +48,6 @@ void APointersManager::OnSharedPointerDereferenced()
 	}
 
 	SharedPointerObjectPtr.Reset();
+
+	OnSharedPointerDeactivated.Broadcast();
 }

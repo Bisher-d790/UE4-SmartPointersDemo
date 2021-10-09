@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "PointerReferencer.h"
 #include "PointersManager.generated.h"
 
 
@@ -32,6 +33,12 @@ private:
 
 	UPROPERTY(EditInstanceOnly, Category = "Shared Pointer")
 		TArray<class APointerReferencer*> SharedPointerReferencers;
+
+	UPROPERTY(BlueprintAssignable, Category = "Reference")
+		FOnAction OnSharedPointerActivated;
+
+	UPROPERTY(BlueprintAssignable, Category = "Reference")
+		FOnAction OnSharedPointerDeactivated;
 
 public:
 	TSharedPtr<class APointerReferencedActor> GetSharedPointerRef();
