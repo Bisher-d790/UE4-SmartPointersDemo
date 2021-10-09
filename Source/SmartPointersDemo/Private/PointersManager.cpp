@@ -52,7 +52,6 @@ void APointersManager::OnSharedPointerDereferenced()
 			return;
 	}
 
-	SharedPointerObjectPtr = nullptr;
 	SharedPointerObjectPtr.Reset();
 
 	OnSharedPointerDeactivated.Broadcast();
