@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "PointersManager.h"
 #include "PointerReferencer.h"
+#include "PointerReferencedObject.h"
 #include "PointerReferencedActor.h"
 
 
@@ -27,16 +28,15 @@ void APointersManager::Tick(float DeltaTime)
 
 }
 
-TSharedPtr<APointerReferencedActor> APointersManager::GetSharedPointerRef()
+TSharedPtr<PointerReferencedObject> APointersManager::GetSharedPointerRef()
 {
 	if (!SharedPointerObjectPtr.IsValid())
 	{
-		SharedPointerObjectPtr = TSharedPtr<APointerReferencedActor>(Cast<APointerReferencedActor>(GetWorld()->SpawnActor(SharedPointerClass)));
+		SharedPointerObjectPtr = MakeShareable(new PointerReferencedObject(Cast<APointerReferencedActor>(GetWorld()->SpawnActor(SharedPointerClass))));
+		SharedPointerObjectPtr->GetActorObject()->Setup(this, EPointerTypes::VE_SharedPtr);
 
 		if (IsValid(SharedPointerObjectSpawnPos))
-			SharedPointerObjectPtr->SetActorLocation(SharedPointerObjectSpawnPos->GetActorLocation());
-
-		SharedPointerObjectPtr->Setup(this, EPointerTypes::VE_SharedPtr);
+			SharedPointerObjectPtr->GetActorObject()->SetActorLocation(SharedPointerObjectSpawnPos->GetActorLocation());
 
 		OnSharedPointerActivated.Broadcast();
 	}

@@ -29,7 +29,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Shared Pointer")
 		TSubclassOf<class APointerReferencedActor> SharedPointerClass = nullptr;
 
-	TSharedPtr<class APointerReferencedActor> SharedPointerObjectPtr = nullptr;
+	TSharedPtr<class PointerReferencedObject> SharedPointerObjectPtr = nullptr;
 
 	UPROPERTY(EditInstanceOnly, Category = "Shared Pointer")
 		TArray<class APointerReferencer*> SharedPointerReferencers;
@@ -44,7 +44,7 @@ private:
 		FOnAction OnSharedPointerDeactivated;
 
 public:
-	TSharedPtr<class APointerReferencedActor> GetSharedPointerRef();
+	TSharedPtr<class PointerReferencedObject> GetSharedPointerRef();
 
 	UFUNCTION(BlueprintCallable, Category = "Shared Pointer")
 		FORCEINLINE int GetSharedPointerRefsCount();

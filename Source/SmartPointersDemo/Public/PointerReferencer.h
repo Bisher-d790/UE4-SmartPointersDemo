@@ -19,7 +19,7 @@ public:
 	APointerReferencer();
 
 private:
-	TSharedPtr<class APointerReferencedActor> ReferencePtr = nullptr;
+	TSharedPtr<class PointerReferencedObject> ReferencePtr = nullptr;
 
 	UPROPERTY(EditInstanceOnly, Category = "Reference")
 		class APointersManager* PointerManagerRef = nullptr;

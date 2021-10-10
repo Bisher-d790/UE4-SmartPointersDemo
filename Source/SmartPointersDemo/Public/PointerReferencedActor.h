@@ -16,22 +16,17 @@ public:
 	// Sets default values for this actor's properties
 	APointerReferencedActor();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	class APointersManager* PointersManagerRef;
 
 	EPointerTypes PointerReferenceType;
 
-	TSharedPtr<class APointersManager> PointersManagerRef;
-
 public:
-	void Setup(class APointersManager* Manager, EPointerTypes PointerType);
-
-	FORCEINLINE void SetPointerType(EPointerTypes PointerType) { PointerReferenceType = PointerType; };
+	void Setup(class APointersManager* PointersManager, EPointerTypes PointerType);
 
 	UFUNCTION(BlueprintCallable, Category = "Reference")
-		FORCEINLINE class APointersManager* GetPointerManagerRef() { return PointersManagerRef.Get(); };
+		FORCEINLINE EPointerTypes GetPointerType() { return PointerReferenceType; };
+
+	UFUNCTION(BlueprintCallable, Category = "Reference")
+		FORCEINLINE class APointersManager* GetPointerManagerRef() { return PointersManagerRef; };
 };
