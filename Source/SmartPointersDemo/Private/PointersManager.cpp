@@ -13,26 +13,12 @@ APointersManager::APointersManager()
 
 }
 
-// Called when the game starts or when spawned
-void APointersManager::BeginPlay()
-{
-	Super::BeginPlay();
-
-
-}
-
-// Called every frame
-void APointersManager::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
+#pragma region Shared Pointer
 TSharedPtr<PointerReferencedObject> APointersManager::GetSharedPointerRef()
 {
 	if (!SharedPointerObjectPtr.IsValid())
 	{
-		SharedPointerObjectPtr = MakeShareable(new PointerReferencedObject(Cast<APointerReferencedActor>(GetWorld()->SpawnActor(SharedPointerClass))));
+		SharedPointerObjectPtr = MakeShareable(new PointerReferencedObject(Cast<APointerReferencedActor>(GetWorld()->SpawnActor(PointerClass))));
 		SharedPointerObjectPtr->GetActorObject()->Setup(this, EPointerTypes::VE_SharedPtr);
 
 		if (IsValid(SharedPointerObjectSpawnPos))
@@ -76,3 +62,61 @@ int APointersManager::GetSharedPointerRefsCount()
 
 	return referenceNum;
 }
+#pragma endregion
+
+#pragma region Weak Pointer
+TSharedPtr<PointerReferencedObject> APointersManager::GetWeakPointerRef()
+{
+	if (!WeakPointerObjectPtr.IsValid())
+	{
+		WeakPointerObjectPtr = MakeShareable(new PointerReferencedObject(Cast<APointerReferencedActor>(GetWorld()->SpawnActor(PointerClass))));
+		WeakPointerObjectPtr->GetActorObject()->Setup(this, EPointerTypes::VE_WeakPtr);
+
+		if (IsValid(WeakPointerObjectSpawnPos))
+			WeakPointerObjectPtr->GetActorObject()->SetActorLocation(WeakPointerObjectSpawnPos->GetActorLocation());
+
+		OnWeakPointerActivated.Broadcast();
+	}
+
+	return WeakPointerObjectPtr;
+}
+
+void APointersManager::OnWeakPointerDereferenced()
+{
+	for (auto& ReferencerIndex : WeakPointerReferencers)
+	{
+		if (ReferencerIndex->GetPointerType() == EPointerTypes::VE_SharedPtr && ReferencerIndex->IsReferenceValid())
+			return;
+	}
+
+	WeakPointerObjectPtr.Reset();
+
+	OnWeakPointerDeactivated.Broadcast();
+}
+
+int APointersManager::GetWeakPointerRefsCount()
+{
+	int referenceNum = 0;
+
+	if (WeakPointerObjectPtr.IsValid())
+	{
+		referenceNum = WeakPointerObjectPtr.GetSharedReferenceCount();
+	}
+	else
+	{
+		for (auto& ReferencerIndex : WeakPointerReferencers)
+		{
+			if (ReferencerIndex->IsReferenceValid())
+				referenceNum++;
+		}
+	}
+
+	return referenceNum;
+}
+#pragma endregion
+
+#pragma region Shared Reference
+#pragma endregion
+
+#pragma region Unique Pointer
+#pragma endregion

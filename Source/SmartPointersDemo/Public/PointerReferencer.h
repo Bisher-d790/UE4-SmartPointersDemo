@@ -19,13 +19,17 @@ public:
 	APointerReferencer();
 
 private:
-	TSharedPtr<class PointerReferencedObject> ReferencePtr = nullptr;
+	TSharedPtr<class PointerReferencedObject> SharedReferencePtr = nullptr;
+	TWeakPtr<class PointerReferencedObject> WeakReferencePtr = nullptr;
 
 	UPROPERTY(EditInstanceOnly, Category = "Reference")
 		class APointersManager* PointerManagerRef = nullptr;
 
 	UPROPERTY(EditInstanceOnly, Category = "Reference")
 		EPointerTypes PointerReferenceType;
+
+	UPROPERTY(EditInstanceOnly, Category = "Reference")
+		EPointerTypes PointerManagerType;
 
 	UPROPERTY(BlueprintAssignable, Category = "Reference")
 		FOnAction OnReferenceActivated;
@@ -35,11 +39,14 @@ private:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Reference")
-		FORCEINLINE bool IsReferenceValid() { return ReferencePtr.IsValid(); };
+		bool IsReferenceValid();
 
 	UFUNCTION(BlueprintCallable, Category = "Reference")
 		void SetReferenceActive(bool bActivate);
 
 	UFUNCTION(BlueprintCallable, Category = "Reference")
 		void ToggleReferenceActiveState();
+
+	UFUNCTION(BlueprintCallable, Category = "Reference")
+		FORCEINLINE EPointerTypes GetPointerType() { return PointerReferenceType; };
 };

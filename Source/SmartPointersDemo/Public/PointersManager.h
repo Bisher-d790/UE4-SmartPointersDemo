@@ -17,18 +17,12 @@ public:
 	// Sets default values for this actor's properties
 	APointersManager();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Shared Pointer")
+		TSubclassOf<class APointerReferencedActor> PointerClass = nullptr;
 
 #pragma region Shared Pointer
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Shared Pointer")
-		TSubclassOf<class APointerReferencedActor> SharedPointerClass = nullptr;
-
 	TSharedPtr<class PointerReferencedObject> SharedPointerObjectPtr = nullptr;
 
 	UPROPERTY(EditInstanceOnly, Category = "Shared Pointer")
@@ -47,9 +41,39 @@ public:
 	TSharedPtr<class PointerReferencedObject> GetSharedPointerRef();
 
 	UFUNCTION(BlueprintCallable, Category = "Shared Pointer")
-		FORCEINLINE int GetSharedPointerRefsCount();
+		int GetSharedPointerRefsCount();
 
 	void OnSharedPointerDereferenced();
-#pragma endregion Shared Pointer
+#pragma endregion
 
+#pragma region Weak Pointer
+private:
+	TSharedPtr<class PointerReferencedObject> WeakPointerObjectPtr = nullptr;
+
+	UPROPERTY(EditInstanceOnly, Category = "Weak Pointer")
+		TArray<class APointerReferencer*> WeakPointerReferencers;
+
+	UPROPERTY(EditInstanceOnly, Category = "Weak Pointer")
+		AActor* WeakPointerObjectSpawnPos;
+
+	UPROPERTY(BlueprintAssignable, Category = "Weak Pointer")
+		FOnAction OnWeakPointerActivated;
+
+	UPROPERTY(BlueprintAssignable, Category = "Weak Pointer")
+		FOnAction OnWeakPointerDeactivated;
+
+public:
+	TSharedPtr<class PointerReferencedObject> GetWeakPointerRef();
+
+	UFUNCTION(BlueprintCallable, Category = "Weak Pointer")
+		int GetWeakPointerRefsCount();
+
+	void OnWeakPointerDereferenced();
+#pragma endregion
+
+#pragma region Shared Reference
+#pragma endregion
+
+#pragma region Unique Pointer
+#pragma endregion
 };
