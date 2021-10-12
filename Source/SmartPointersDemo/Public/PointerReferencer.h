@@ -19,8 +19,8 @@ public:
 	APointerReferencer();
 
 private:
-	TSharedPtr<class PointerReferencedObject> SharedReferencePtr = nullptr;
-	TWeakPtr<class PointerReferencedObject> WeakReferencePtr = nullptr;
+	TSharedPtr<class PointerReferencedObject> SharedPtrReferencePtr = nullptr;
+	TWeakPtr<class PointerReferencedObject> WeakPtrReferencePtr = nullptr;
 
 	UPROPERTY(EditInstanceOnly, Category = "Reference")
 		class APointersManager* PointerManagerRef = nullptr;

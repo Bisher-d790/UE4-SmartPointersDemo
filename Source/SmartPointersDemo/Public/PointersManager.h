@@ -72,6 +72,28 @@ public:
 #pragma endregion
 
 #pragma region Shared Reference
+private:
+	TSharedPtr<class PointerReferencedObject> SharedReferenceObjectPtr;
+
+	UPROPERTY(EditInstanceOnly, Category = "Shared Reference")
+		TArray<class APointerReferencer*> SharedReferenceReferencers;
+
+	UPROPERTY(EditInstanceOnly, Category = "Shared Reference")
+		AActor* SharedReferenceObjectSpawnPos;
+
+	UPROPERTY(BlueprintAssignable, Category = "Shared Reference")
+		FOnAction OnSharedReferenceActivated;
+
+	UPROPERTY(BlueprintAssignable, Category = "Shared Reference")
+		FOnAction OnSharedReferenceDeactivated;
+
+public:
+	TSharedPtr<class PointerReferencedObject> GetSharedReferenceRef();
+
+	UFUNCTION(BlueprintCallable, Category = "Shared Reference")
+		int GetSharedReferenceRefsCount();
+
+	void OnSharedReferenceDereferenced();
 #pragma endregion
 
 #pragma region Unique Pointer

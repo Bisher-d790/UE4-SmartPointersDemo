@@ -16,14 +16,25 @@ void APointerReferencer::SetReferenceActive(bool bActivate)
 	{
 		if (PointerManagerType == EPointerTypes::VE_SharedPtr)
 		{
-			SharedReferencePtr = PointerManagerRef->GetSharedPointerRef();
+			SharedPtrReferencePtr = PointerManagerRef->GetSharedPointerRef();
 		}
 		else if (PointerManagerType == EPointerTypes::VE_WeakPtr)
 		{
 			if (PointerReferenceType == EPointerTypes::VE_SharedPtr)
-				SharedReferencePtr = PointerManagerRef->GetWeakPointerRef();
+				SharedPtrReferencePtr = PointerManagerRef->GetWeakPointerRef();
 			else if (PointerReferenceType == EPointerTypes::VE_WeakPtr)
-				WeakReferencePtr = TWeakPtr<PointerReferencedObject>(PointerManagerRef->GetWeakPointerRef());
+				WeakPtrReferencePtr = TWeakPtr<PointerReferencedObject>(PointerManagerRef->GetWeakPointerRef());
+		}
+		else if (PointerManagerType == EPointerTypes::VE_SharedRef)
+		{
+			if (PointerReferenceType == EPointerTypes::VE_SharedPtr)
+				SharedPtrReferencePtr = PointerManagerRef->GetSharedReferenceRef();
+			if (PointerReferenceType == EPointerTypes::VE_SharedRef)
+			{
+				//To show how to declare a SharedRef
+				TSharedRef<PointerReferencedObject>TempPtr = PointerManagerRef->GetSharedReferenceRef().ToSharedRef();
+				SharedPtrReferencePtr = TSharedPtr<PointerReferencedObject>(TempPtr);
+			}
 		}
 
 		if (!IsReferenceValid())return;
@@ -34,17 +45,24 @@ void APointerReferencer::SetReferenceActive(bool bActivate)
 	{
 		if (PointerManagerType == EPointerTypes::VE_SharedPtr)
 		{
-			SharedReferencePtr.Reset();
+			SharedPtrReferencePtr.Reset();
 			PointerManagerRef->OnSharedPointerDereferenced();
 		}
 		else if (PointerManagerType == EPointerTypes::VE_WeakPtr)
 		{
 			if (PointerReferenceType == EPointerTypes::VE_SharedPtr)
-				SharedReferencePtr.Reset();
+				SharedPtrReferencePtr.Reset();
 			else if (PointerReferenceType == EPointerTypes::VE_WeakPtr)
-				WeakReferencePtr.Reset();
+				WeakPtrReferencePtr.Reset();
 
 			PointerManagerRef->OnWeakPointerDereferenced();
+		}
+		else if (PointerManagerType == EPointerTypes::VE_SharedRef)
+		{
+			if (PointerReferenceType == EPointerTypes::VE_SharedPtr)
+				SharedPtrReferencePtr.Reset();
+			if (PointerReferenceType == EPointerTypes::VE_SharedRef)
+				return;
 		}
 
 		if (IsReferenceValid())return;
@@ -62,11 +80,15 @@ bool APointerReferencer::IsReferenceValid()
 {
 	if (PointerReferenceType == EPointerTypes::VE_SharedPtr)
 	{
-		return SharedReferencePtr.IsValid();
+		return SharedPtrReferencePtr.IsValid();
 	}
 	else if (PointerReferenceType == EPointerTypes::VE_WeakPtr)
 	{
-		return WeakReferencePtr.IsValid();
+		return WeakPtrReferencePtr.IsValid();
+	}
+	if (PointerReferenceType == EPointerTypes::VE_SharedRef)
+	{
+		return SharedPtrReferencePtr.IsValid();
 	}
 	return false;
 };

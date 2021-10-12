@@ -11,6 +11,6 @@ PointerReferencedObject::PointerReferencedObject(APointerReferencedActor* ActorO
 
 PointerReferencedObject::~PointerReferencedObject()
 {
-	if (IsValid(ActorObject))
+	if (IsValid(ActorObject) && !ActorObject->GetName().Equals(FName((EName::NAME_None)).ToString()))
 		ActorObject->Destroy();
 }

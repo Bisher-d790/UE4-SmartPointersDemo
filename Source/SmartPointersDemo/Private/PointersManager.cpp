@@ -116,6 +116,56 @@ int APointersManager::GetWeakPointerRefsCount()
 #pragma endregion
 
 #pragma region Shared Reference
+TSharedPtr<PointerReferencedObject> APointersManager::GetSharedReferenceRef()
+{
+	if (!SharedReferenceObjectPtr.IsValid())
+	{
+		TSharedRef<PointerReferencedObject>TempRef = TSharedRef<PointerReferencedObject>(new PointerReferencedObject(Cast<APointerReferencedActor>(GetWorld()->SpawnActor(PointerClass))));
+		TempRef->GetActorObject()->Setup(this, EPointerTypes::VE_SharedRef);
+
+		if (IsValid(SharedReferenceObjectSpawnPos))
+			TempRef->GetActorObject()->SetActorLocation(SharedReferenceObjectSpawnPos->GetActorLocation());
+
+		OnSharedReferenceActivated.Broadcast();
+
+		SharedReferenceObjectPtr = TSharedPtr<PointerReferencedObject>(TempRef);
+	}
+
+	return SharedReferenceObjectPtr;
+}
+
+void APointersManager::OnSharedReferenceDereferenced()
+{
+	for (auto& ReferencerIndex : SharedReferenceReferencers)
+	{
+		if (ReferencerIndex->IsReferenceValid())
+			return;
+	}
+
+	SharedReferenceObjectPtr.Reset();
+
+	OnSharedReferenceDeactivated.Broadcast();
+}
+
+int APointersManager::GetSharedReferenceRefsCount()
+{
+	int referenceNum = 0;
+
+	if (SharedReferenceObjectPtr.IsValid())
+	{
+		referenceNum = SharedReferenceObjectPtr.GetSharedReferenceCount();
+	}
+	else
+	{
+		for (auto& ReferencerIndex : SharedReferenceReferencers)
+		{
+			if (ReferencerIndex->IsReferenceValid())
+				referenceNum++;
+		}
+	}
+
+	return referenceNum;
+}
 #pragma endregion
 
 #pragma region Unique Pointer
