@@ -21,6 +21,7 @@ public:
 private:
 	TSharedPtr<class PointerReferencedObject> SharedPtrReferencePtr = nullptr;
 	TWeakPtr<class PointerReferencedObject> WeakPtrReferencePtr = nullptr;
+	TUniquePtr<class PointerReferencedObject> UniquePtrReferencePtr = nullptr;
 
 	UPROPERTY(EditInstanceOnly, Category = "Reference")
 		class APointersManager* PointerManagerRef = nullptr;

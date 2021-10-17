@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "PointerReferencedObject.h"
 #include "PointersManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAction);
@@ -97,5 +98,31 @@ public:
 #pragma endregion
 
 #pragma region Unique Pointer
+private:
+	TUniquePtr<class PointerReferencedObject> UniquePointerObjectPtr = nullptr;
+
+	UPROPERTY(EditInstanceOnly, Category = "Unique Pointer")
+		TArray<class APointerReferencer*> UniquePointerReferencers;
+
+	UPROPERTY(EditInstanceOnly, Category = "Unique Pointer")
+		AActor* UniquePointerObjectSpawnPos;
+
+	UPROPERTY(BlueprintAssignable, Category = "Unique Pointer")
+		FOnAction OnUniquePointerActivated;
+
+	UPROPERTY(BlueprintAssignable, Category = "Unique Pointer")
+		FOnAction OnUniquePointerDeactivated;
+
+public:
+	TUniquePtr<class PointerReferencedObject> GetUniquePointerRef();
+
+	UFUNCTION(BlueprintCallable, Category = "Unique Pointer")
+		int GetUniquePointerRefsCount();
+
+	UFUNCTION(BlueprintCallable, Category = "Unique Pointer")
+		void OnUniquePointerDereferenced();
+
+	UFUNCTION(BlueprintCallable, Category = "Unique Pointer")
+		void OnUniquePointerReferenced();
 #pragma endregion
 };

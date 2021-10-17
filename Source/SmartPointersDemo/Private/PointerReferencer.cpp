@@ -36,6 +36,17 @@ void APointerReferencer::SetReferenceActive(bool bActivate)
 				SharedPtrReferencePtr = TSharedPtr<PointerReferencedObject>(TempPtr);
 			}
 		}
+		else if (PointerManagerType == EPointerTypes::VE_UniquePtr)
+		{
+			if (PointerReferenceType == EPointerTypes::VE_UniquePtr)
+				UniquePtrReferencePtr = PointerManagerRef->GetUniquePointerRef();
+			if (PointerReferenceType == EPointerTypes::VE_SharedPtr
+				|| PointerReferenceType == EPointerTypes::VE_WeakPtr)
+			{
+				PointerManagerRef->GetUniquePointerRef();
+				SharedPtrReferencePtr = nullptr;
+			}
+		}
 
 		if (!IsReferenceValid())return;
 
@@ -64,6 +75,24 @@ void APointerReferencer::SetReferenceActive(bool bActivate)
 			if (PointerReferenceType == EPointerTypes::VE_SharedRef)
 				return;
 		}
+		else if (PointerManagerType == EPointerTypes::VE_UniquePtr)
+		{
+			if (PointerReferenceType == EPointerTypes::VE_SharedPtr && SharedPtrReferencePtr.IsValid())
+			{
+				SharedPtrReferencePtr.Reset();
+				PointerManagerRef->OnUniquePointerDereferenced();
+			}
+			else if (PointerReferenceType == EPointerTypes::VE_WeakPtr && WeakPtrReferencePtr.IsValid())
+			{
+				WeakPtrReferencePtr.Reset();
+				PointerManagerRef->OnUniquePointerDereferenced();
+			}
+			else if (PointerReferenceType == EPointerTypes::VE_UniquePtr && UniquePtrReferencePtr.IsValid())
+			{
+				UniquePtrReferencePtr.Reset();
+				PointerManagerRef->OnUniquePointerDereferenced();
+			}
+		}
 
 		if (IsReferenceValid())return;
 
@@ -90,5 +119,10 @@ bool APointerReferencer::IsReferenceValid()
 	{
 		return SharedPtrReferencePtr.IsValid();
 	}
+	if (PointerReferenceType == EPointerTypes::VE_UniquePtr)
+	{
+		return UniquePtrReferencePtr.IsValid();
+	}
+
 	return false;
 };

@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "PointersManager.h"
 #include "PointerReferencer.h"
-#include "PointerReferencedObject.h"
 #include "PointerReferencedActor.h"
 
 
@@ -169,4 +168,57 @@ int APointersManager::GetSharedReferenceRefsCount()
 #pragma endregion
 
 #pragma region Unique Pointer
+TUniquePtr<PointerReferencedObject> APointersManager::GetUniquePointerRef()
+{
+	if (!UniquePointerObjectPtr.IsValid())
+	{
+		UniquePointerObjectPtr = TUniquePtr<PointerReferencedObject>(new PointerReferencedObject(Cast<APointerReferencedActor>(GetWorld()->SpawnActor(PointerClass))));
+		UniquePointerObjectPtr->GetActorObject()->Setup(this, EPointerTypes::VE_UniquePtr);
+
+		if (IsValid(UniquePointerObjectSpawnPos))
+			UniquePointerObjectPtr->GetActorObject()->SetActorLocation(UniquePointerObjectSpawnPos->GetActorLocation());
+
+		OnUniquePointerActivated.Broadcast();
+	}
+
+	return nullptr;
+}
+
+void APointersManager::OnUniquePointerReferenced()
+{
+	GetUniquePointerRef();
+}
+
+void APointersManager::OnUniquePointerDereferenced()
+{
+	for (auto& ReferencerIndex : UniquePointerReferencers)
+	{
+		if (ReferencerIndex->IsReferenceValid())
+			return;
+	}
+
+	UniquePointerObjectPtr.Reset();
+
+	OnUniquePointerDeactivated.Broadcast();
+}
+
+int APointersManager::GetUniquePointerRefsCount()
+{
+	int referenceNum = 0;
+
+	if (UniquePointerObjectPtr.IsValid())
+	{
+		referenceNum = 1;
+	}
+	else
+	{
+		for (auto& ReferencerIndex : UniquePointerReferencers)
+		{
+			if (ReferencerIndex->IsReferenceValid())
+				referenceNum++;
+		}
+	}
+
+	return referenceNum;
+}
 #pragma endregion
